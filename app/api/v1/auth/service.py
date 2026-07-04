@@ -1,6 +1,6 @@
 class AuthService:
-    def __init__(self, UserRepo):
-        self.user_repo = UserRepo
+    def __init__(self, user_repo):
+        self.user_repo = user_repo
 
     def login(self, user_data):
         email = user_data.email
