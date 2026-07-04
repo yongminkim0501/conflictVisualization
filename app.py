@@ -1,16 +1,30 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, g
 
-app = Flask(__name__)
+from app.database.database_session import Database
 
+from app.core.container import Container
 
-@app.route("/")
-def index():
-    return render_template("index.html")
+def create_app():
+    app = Flask(__name__)
 
+    @app.before_request
+    def open_container():
+        db = Database.get_local_session()
+        g.container = Container
 
-@app.route("/api/health")
-def health():
-    return jsonify(status="ok")
+    @app.teardown_request
+    def close_container(error=None):
+        container = getattr(g, "container", None)
+        if container is None:
+            return
+        if error:
+            container.db.rollback()
+        else:
+            container.db.commit()
+        container.db.close()
+    return app
+
+app = create_app()
 
 
 if __name__ == "__main__":
