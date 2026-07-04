@@ -1,5 +1,3 @@
-from app.core.error_handler import NotMatchPassword
-
 class UserRepository:
     def __init__(self, db, jwt_service):
         self.db = db
@@ -10,6 +8,6 @@ class UserRepository:
         if self.db.check_password(user, password):
             generated_jwt:str = self.jwt_service.create_jwt(user)
         else:
-            raise NotMatchPassword
+            raise "NotMatchPassword"
 
         return generated_jwt
